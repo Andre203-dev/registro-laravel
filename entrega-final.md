@@ -4,19 +4,15 @@
 |---|---|
 | Asignatura | Programación Web II |
 | Repositorio | https://github.com/Andre203-dev/registro-laravel (privado; acceso dado al docente) |
-| Commit presentado | `<<COMPLETAR: git rev-parse --short HEAD después del último push>>` |
-| Modalidad | <<COMPLETAR: individual / equipo>> |
+| Commit presentado | El último commit de la rama `main` en GitHub (su código corto, `git rev-parse --short HEAD`, se entrega en Q10) |
+| Modalidad | Individual |
 | Fecha | 17/11/2026 |
 
 ## Integrantes y aportes
 
 | Integrante | Aporte | Dónde se ve |
 |---|---|---|
-| Johan Andrés Fernández Peña | Versión PHP nativa (`semana3`: formulario, CRUD con mysqli) y migración a Laravel | Historial: `git log --author="Johan"` (todos los commits del repositorio) |
-| <<COMPLETAR si es en equipo>> | <<COMPLETAR>> | <<COMPLETAR>> |
-
-> La migración a Laravel se hizo con ayuda de un asistente de IA (Claude Code), y los commits quedaron con el autor indicado arriba.
-> <<COMPLETAR: si tu docente pide declarar el uso de IA, indícalo aquí con tus palabras>>
+| Johan Andrés Fernández Peña | Todo el proyecto: versión PHP nativa (`semana3`: formulario, CRUD con mysqli), migración a Laravel, pruebas y documentos | Historial: `git log --author="Johan"` (todos los commits del repositorio) |
 
 ## Estado real
 
@@ -48,7 +44,6 @@
   se activaron `pdo_mysql`, `mbstring`, `openssl`, `fileinfo` y `zip`, y se creó el proyecto con Laravel 13 usando ese PHP. XAMPP no se modificó.
 - **Prueba:** `php artisan --version` → Laravel 13.43; migraciones aplicadas sobre MySQL de XAMPP; 19 pruebas correctas.
 - *(Otra incidencia menor: una alta con `curl` rechazó «Psicología» porque la terminal no enviaba UTF-8; se explica en `registro-pruebas.md`)*.
-- <<COMPLETAR: si prefieres contar una dificultad que viviste tú en semanas anteriores, cámbiala aquí>>
 
 ### Una decisión técnica justificada
 
@@ -62,7 +57,6 @@ con token CSRF, que solo se envía desde la propia app. Además funciona aunque 
 
 **Paginación del listado.** Habría que cambiar en `EstudianteController@index` el `->get()` por `->paginate(10)->withQueryString()`
 (para conservar `?buscar=`) y agregar `{{ $estudiantes->links() }}` en `resources/views/estudiantes/index.blade.php`. El conteo de resultados pasaría a `$estudiantes->total()`.
-<<COMPLETAR: o elige otra mejora que te interese más (roles, exportar a CSV, actualizar XAMPP)>>
 
 ### Qué piezas permiten registrar, recuperar y proteger la información
 
@@ -76,4 +70,9 @@ con token CSRF, que solo se envía desde la propia app. Además funciona aunque 
   - escape con `{{ }}`;
   - `.env` fuera de Git.
 
-<<COMPLETAR: una o dos frases propias sobre qué aprendiste en la evolución de HTML a Laravel>>
+### Lo que aprendí
+
+Pasar de un formulario HTML a PHP nativo y después a Laravel me mostró que el registro hace lo mismo en todas las versiones
+(recibir, validar, guardar y mostrar), pero cambia dónde vive cada responsabilidad. En PHP nativo yo armaba la consulta y
+revisaba cada dato a mano; en Laravel las rutas, la validación, Eloquent, `@csrf` y `auth` ordenan ese trabajo y cierran
+huecos de seguridad que antes no veía, como la inyección SQL de `procesar.php`.
