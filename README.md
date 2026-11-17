@@ -1,58 +1,98 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Registro académico (Laravel)
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+Proyecto final de **Programación Web II**. Es la migración a Laravel del formulario PHP nativo + MySQL
+(carpeta `semana3`). Un **operador/docente** inicia sesión y gestiona el registro de **estudiantes**
+(alta, listado con búsqueda, edición y eliminación con confirmación).
 
-## About Laravel
+| Dato | Regla |
+|---|---|
+| Nombre, apellido | Obligatorios, máximo 100 caracteres |
+| Número de identidad | Obligatorio, máximo 20 caracteres |
+| Correo | Obligatorio, formato de correo, **único** |
+| Edad | Entero entre **16** y 99 (15 se rechaza) |
+| Programa | Solo valores del catálogo de `config/registro.php` |
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+## Requisitos
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+- **PHP 8.3 o superior** con las extensiones `pdo_mysql`, `mbstring`, `openssl`, `fileinfo`, `zip` y `curl`.
+- **Composer 2**.
+- **MySQL o MariaDB** (por ejemplo, el de XAMPP).
+- Git.
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+> **Si usas XAMPP con PHP 8.0 o 8.1:** Laravel 13 no funciona con esa versión. Instala un PHP 8.3 aparte
+> (por ejemplo, el ZIP "VS16 x64 Non Thread Safe" de https://windows.php.net/download/, descomprimido en `C:\php83`,
+> con `php.ini-development` copiado como `php.ini` y esas extensiones activadas). Luego usa ese PHP en todos los comandos:
+> `C:\php83\php.exe C:\composer\composer.phar install` y `C:\php83\php.exe artisan ...`.
+> Comprueba la versión con `php -v`.
 
-## Learning Laravel
+## Configuración local
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+Copia `.env.example` a `.env` (lo hace el arranque de abajo) y ajusta estas variables:
 
-In addition, [Laracasts](https://laracasts.com) contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+| Variable | Qué poner |
+|---|---|
+| `DB_HOST`, `DB_PORT` | Normalmente `127.0.0.1` y `3306` |
+| `DB_DATABASE` | La base que vas a crear, p. ej. `registro_laravel` |
+| `DB_USERNAME`, `DB_PASSWORD` | Tu usuario de MySQL (en XAMPP suele ser `root` sin clave) |
+| `DOCENTE_EMAIL`, `DOCENTE_CLAVE` | Correo y clave del operador (ver abajo) |
 
-You can also watch bite-sized lessons with real-world projects on [Laravel Learn](https://laravel.com/learn), where you will be guided through building a Laravel application from scratch while learning PHP fundamentals.
+`.env` **nunca se sube a Git**: tiene la `APP_KEY` y tus claves locales.
 
-## Agentic Development
+## Base de datos
 
-Laravel's predictable structure and conventions make it ideal for AI coding agents like Claude Code, Cursor, and GitHub Copilot. Install [Laravel Boost](https://laravel.com/docs/ai) to supercharge your AI workflow:
+Crea una base vacía (desde phpMyAdmin o la consola):
 
-```bash
-composer require laravel/boost --dev
-
-php artisan boost:install
+```sql
+CREATE DATABASE registro_laravel CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+-- Solo si vas a correr las pruebas automáticas:
+CREATE DATABASE registro_laravel_test CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 ```
 
-Boost provides your agent 15+ tools and skills that help agents build Laravel applications while following best practices.
+Con XAMPP: `C:\xampp\mysql\bin\mysql.exe -u root -e "CREATE DATABASE registro_laravel"`.
 
-## Contributing
+## Preparación del operador
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+El operador (docente) no es un estudiante: es el usuario que inicia sesión. Antes del seeder,
+escribe en **tu `.env` local** un correo y una clave propios:
 
-## Code of Conduct
+```dotenv
+DOCENTE_EMAIL=docente@ejemplo.test
+DOCENTE_CLAVE=una-clave-solo-tuya
+```
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+`php artisan db:seed --class=DocenteSeeder` crea ese usuario con la clave **hasheada**.
+Usa `firstOrCreate`: **si el correo ya existe, no reemplaza su clave**. Para cambiarla, usa otro correo
+o borra ese usuario de la tabla `users` y vuelve a ejecutar el seeder.
 
-## Security Vulnerabilities
+## Arranque
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+```powershell
+git clone <URL-del-repositorio> registro-defensa
+cd registro-defensa
+composer install
+Copy-Item .env.example .env      # en Linux/Mac: cp .env.example .env
+# configurar .env: DB_*, DOCENTE_EMAIL y DOCENTE_CLAVE
+php artisan key:generate
+php artisan config:clear
+php artisan migrate
+php artisan db:seed --class=DocenteSeeder
+php artisan serve
+```
 
-## License
+Abre http://127.0.0.1:8000 e inicia sesión con `DOCENTE_EMAIL` / `DOCENTE_CLAVE`.
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+## Pruebas
+
+Los casos de prueba y sus resultados están en [`registro-pruebas.md`](registro-pruebas.md).
+Las pruebas automáticas usan la base `registro_laravel_test` (ver `phpunit.xml`), nunca la principal:
+
+```powershell
+php artisan test
+```
+
+## Documentos de la entrega
+
+- [`registro-pruebas.md`](registro-pruebas.md): casos de prueba.
+- [`guion-defensa.md`](guion-defensa.md): recorrido para la presentación.
+- [`preguntas-defensa.md`](preguntas-defensa.md): preguntas esperadas y cambios en vivo.
+- [`entrega-final.md`](entrega-final.md): estado, aportes y cierre reflexivo.
