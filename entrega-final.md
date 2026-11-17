@@ -3,7 +3,7 @@
 | Dato | Valor |
 |---|---|
 | Asignatura | Programación Web II |
-| Repositorio | `https://github.com/<<COMPLETAR usuario>>/registro-laravel` (privado; acceso dado al docente) |
+| Repositorio | https://github.com/Andre203-dev/registro-laravel (privado; acceso dado al docente) |
 | Commit presentado | `<<COMPLETAR: git rev-parse --short HEAD después del último push>>` |
 | Modalidad | <<COMPLETAR: individual / equipo>> |
 | Fecha | 17/11/2026 |
