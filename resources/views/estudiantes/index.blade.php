@@ -56,11 +56,8 @@
                             <td>{{ $estudiante->programa }}</td>
                             <td class="text-center text-nowrap">
                                 <a href="{{ route('estudiantes.edit', $estudiante) }}" class="btn btn-warning btn-sm">Editar</a>
-                                <form action="{{ route('estudiantes.destroy', $estudiante) }}" method="POST" class="d-inline">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="submit" class="btn btn-danger btn-sm">Eliminar</button>
-                                </form>
+                                {{-- Solo lleva a la confirmación; todavía no borra --}}
+                                <a href="{{ route('estudiantes.confirmar', $estudiante) }}" class="btn btn-danger btn-sm">Eliminar</a>
                             </td>
                         </tr>
                     @empty

@@ -81,7 +81,16 @@ class EstudianteController extends Controller
     }
 
     /**
-     * Borrar (antes: eliminar.php).
+     * Paso 1: pantalla de confirmación (antes: el confirm() de JavaScript en listar.php).
+     */
+    public function confirmarEliminar(Estudiante $estudiante)
+    {
+        return view('estudiantes.confirmar', compact('estudiante'));
+    }
+
+    /**
+     * Paso 2: borrar solo esta fila (antes: eliminar.php).
+     * DELETE FROM estudiantes WHERE id = $estudiante->id
      */
     public function destroy(Estudiante $estudiante)
     {
