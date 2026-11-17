@@ -28,7 +28,16 @@
 <nav class="navbar navbar-dark bg-dark">
     <div class="container">
         <a class="navbar-brand" href="{{ url('/') }}">Registro académico</a>
-        @yield('nav')
+        @auth
+            <div class="d-flex align-items-center gap-3">
+                <span class="navbar-text text-light small">Operador: {{ auth()->user()->email }}</span>
+                {{-- Salir es POST con @csrf: un simple enlace no puede cerrar la sesión de nadie --}}
+                <form action="{{ route('logout') }}" method="POST" class="m-0">
+                    @csrf
+                    <button type="submit" class="btn btn-outline-light btn-sm">Salir</button>
+                </form>
+            </div>
+        @endauth
     </div>
 </nav>
 
