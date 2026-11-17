@@ -9,13 +9,23 @@ use Illuminate\Validation\Rule;
 class EstudianteController extends Controller
 {
     /**
-     * Listado (antes: listar.php e index.php).
+     * Listado con búsqueda (antes: listar.php e index.php).
+     * /estudiantes?buscar=an  -> filtra por parte del nombre o del apellido.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $estudiantes = Estudiante::orderBy('id')->get();
+        $buscar = trim((string) $request->query('buscar', ''));
 
-        return view('estudiantes.index', compact('estudiantes'));
+        $estudiantes = Estudiante::query()
+            ->when($buscar !== '', function ($consulta) use ($buscar) {
+                // LIKE con parámetro enlazado: el texto buscado nunca se mezcla con el SQL.
+                $consulta->where('nombre', 'like', "%{$buscar}%")
+                    ->orWhere('apellido', 'like', "%{$buscar}%");
+            })
+            ->orderBy('id')
+            ->get();
+
+        return view('estudiantes.index', compact('estudiantes', 'buscar'));
     }
 
     /**

@@ -9,9 +9,25 @@
 
             <h2 class="text-center mb-4">Lista de Estudiantes</h2>
 
-            <div class="mb-3">
+            <div class="d-flex flex-wrap gap-2 justify-content-between mb-3">
                 <a href="{{ route('estudiantes.create') }}" class="btn btn-primary">+ Nuevo estudiante</a>
+
+                {{-- Búsqueda por GET: la URL queda como /estudiantes?buscar=texto --}}
+                <form action="{{ route('estudiantes.index') }}" method="GET" class="d-flex gap-2" role="search">
+                    <input type="search" name="buscar" value="{{ $buscar }}" class="form-control"
+                           placeholder="Buscar por nombre o apellido" aria-label="Buscar">
+                    <button type="submit" class="btn btn-outline-primary">Buscar</button>
+                    @if ($buscar !== '')
+                        <a href="{{ route('estudiantes.index') }}" class="btn btn-outline-secondary">Limpiar</a>
+                    @endif
+                </form>
             </div>
+
+            @if ($buscar !== '')
+                <p class="text-muted">
+                    {{ $estudiantes->count() }} resultado(s) para «{{ $buscar }}».
+                </p>
+            @endif
 
             <div class="table-responsive">
                 <table class="table table-striped table-bordered table-hover align-middle">
@@ -49,7 +65,13 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="8" class="text-center text-muted">No hay estudiantes registrados.</td>
+                            <td colspan="8" class="text-center text-muted">
+                                @if ($buscar !== '')
+                                    No se encontraron estudiantes cuyo nombre o apellido contenga «{{ $buscar }}».
+                                @else
+                                    No hay estudiantes registrados.
+                                @endif
+                            </td>
                         </tr>
                     @endforelse
                     </tbody>
